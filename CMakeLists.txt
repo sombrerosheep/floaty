@@ -13,7 +13,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 set(floaty_description "Prototype with SDL")
 set(floaty_source_dir "${CMAKE_SOURCE_DIR}/src")
-set(floaty_include_dir "${floaty_source_dir}/include")
+set(floaty_include_dir "${CMAKE_SOURCE_DIR}/include")
 
 # Build Configuration
 # Define Debug if no value was passed
