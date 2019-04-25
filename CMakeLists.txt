@@ -82,3 +82,10 @@ file(GLOB floaty_source "${floaty_source_dir}/*.c")
 add_executable(floaty ${floaty_source})
 target_include_directories(floaty PUBLIC ${floaty_include_dir} ${SDL2_INCLUDE_DIR})
 target_link_libraries(floaty ${SDL2_LIBRARIES})
+
+# Copy sdl shared lib to our build dest folder
+# This prevents us from having these in path
+# TODO: Verify Linux does not need this
+if (WIN32)
+  configure_file("$ENV{SDL_SHARED}/${CMAKE_BUILD_TYPE}/lib/${PROCESSOR_ARCH}/SDL2.dll" "${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/SDL2.dll" COPYONLY)
+endif(WIN32)
