@@ -1,9 +1,13 @@
 #include <Game.h>
 
 void floaty_handle_input(GameContext *ctx) {
+  const Uint8 *keys = SDL_GetKeyboardState(NULL);
+
+  ctx->player->handle_input(ctx->player, keys);
 }
 
 void floaty_update(GameContext *ctx) {
+  ctx->player->update(ctx->player);
 }
 
 void floaty_draw(GameContext *ctx) {
