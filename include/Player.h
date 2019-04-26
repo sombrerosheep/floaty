@@ -12,12 +12,22 @@ typedef struct PlayerInputState {
 
 typedef struct Player {
   SDL_Point         position;
-  PlayerInputState  input;
+  PlayerInputState  input_state;
 
   /**
    * Move player position by provided x/y offset
   */
   void (*move)(struct Player *player, int x, int y);
+
+  /**
+   * Handles player input
+  */
+  void (*handle_input)(struct Player *player, const Uint8 *keys);
+
+  /**
+  * Update player logic
+  */
+  void (*update)(struct Player *player);
 
   /**
    * Draws the player with the provided renderer
