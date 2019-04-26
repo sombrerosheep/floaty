@@ -38,6 +38,9 @@ int main(int argc, char** argv) {
 
   GameContext context = { window, renderer };
 
+  Player *player = new_player(10, 10);
+  context.player = player;
+
   SDL_Event event;
 
   while (SDL_TRUE) {
