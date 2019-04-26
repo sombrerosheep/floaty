@@ -36,10 +36,8 @@ int main(int argc, char** argv) {
     return -1;
   }
 
-  GameContext context = { window, renderer };
-
   Player *player = new_player(10, 10);
-  context.player = player;
+  GameContext context = { window, renderer, player };
 
   SDL_Event event;
 
