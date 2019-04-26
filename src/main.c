@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <SDL.h>
 
+#include <Game.h>
+
 const int WINDOW_WIDTH = 600;
 const int WINDOW_HEIGHT = 900;
 
@@ -34,6 +36,8 @@ int main(int argc, char** argv) {
     return -1;
   }
 
+  GameContext context = { window, renderer };
+
   SDL_Event event;
 
   while (SDL_TRUE) {
@@ -47,6 +51,10 @@ int main(int argc, char** argv) {
         break;
       }
     }
+
+    floaty_handle_input(&context);
+    floaty_update(&context);
+    floaty_draw(&context);
   }
 
   SDL_DestroyRenderer(renderer);
