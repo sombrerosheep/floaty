@@ -36,8 +36,15 @@ int main(int argc, char** argv) {
     return -1;
   }
 
+  SDL_Rect r[] = {
+    { 100, 350, 300, 10 },
+    { 125, 325, 10, 350 },
+    { 375, 300, 10, 350 },
+    { 250, 150, 10, 250 }
+  };
+  World *world = new_world(r, 4);
   Player *player = new_player(10, 10);
-  GameContext context = { window, renderer, player };
+  GameContext context = { window, renderer, player, world };
 
   SDL_Event event;
 
@@ -58,6 +65,8 @@ int main(int argc, char** argv) {
     floaty_draw(&context);
   }
 
+  free_player(player);
+  free_world(world);
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   return 0;
