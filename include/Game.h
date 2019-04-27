@@ -3,11 +3,13 @@
 
 #include <SDL.h>
 #include <Player.h>
+#include <World.h>
 
 typedef struct GameContext {
   SDL_Window      *window;
   SDL_Renderer    *renderer;
   Player          *player;
+  World           *world;
 } GameContext;
 
 void floaty_handle_input(GameContext *ctx);
