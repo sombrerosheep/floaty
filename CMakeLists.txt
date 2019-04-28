@@ -78,7 +78,10 @@ endforeach()
 message(STATUS "")
 
 #### Build ####
-file(GLOB floaty_source "${floaty_source_dir}/*.c")
+file(GLOB floaty_source
+  "${floaty_source_dir}/*.c"
+  "${floaty_source_dir}/core/*.c"
+)
 add_executable(floaty ${floaty_source})
 target_include_directories(floaty PUBLIC ${floaty_include_dir} ${SDL2_INCLUDE_DIR})
 target_link_libraries(floaty ${SDL2_LIBRARIES})
