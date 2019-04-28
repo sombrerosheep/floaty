@@ -3,6 +3,7 @@
 
 #include <SDL.h>
 #include <core/vec.h>
+#include <World.h>
 
 typedef struct PlayerInputState {
   SDL_bool up;
@@ -13,6 +14,8 @@ typedef struct PlayerInputState {
 
 typedef struct Player {
   vec2f             position;
+  vec2f             size;
+  vec2f             velocity;
   PlayerInputState  input_state;
 
   /**
@@ -28,7 +31,7 @@ typedef struct Player {
   /**
   * Update player logic
   */
-  void (*update)(struct Player *player);
+  void (*update)(struct Player *player, const World *world);
 
   /**
    * Draws the player with the provided renderer
@@ -36,7 +39,14 @@ typedef struct Player {
   void (*draw)(struct Player *player, SDL_Renderer *renderer);
 } Player;
 
+/**
+ * Creates a new player at the given x/y position
+ */
 Player* new_player(float x, float y);
+
+/**
+ * free's memeory used by a player object
+ */
 void free_player(Player *player);
 
 #endif // _PLAYER

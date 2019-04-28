@@ -7,7 +7,7 @@ void floaty_handle_input(GameContext *ctx) {
 }
 
 void floaty_update(GameContext *ctx) {
-  ctx->player->update(ctx->player);
+  ctx->player->update(ctx->player, ctx->world);
 }
 
 void floaty_draw(GameContext *ctx) {
