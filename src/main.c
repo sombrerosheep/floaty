@@ -37,12 +37,13 @@ int main(int argc, char** argv) {
   }
 
   SDL_Rect r[] = {
-    { 100, 350, 300, 10 },
-    { 125, 325, 10, 350 },
-    { 375, 300, 10, 350 },
-    { 250, 150, 10, 250 }
+    { 145, 350, 300, 10 },
+    { 170, 325, 10, 350 },
+    { 420, 300, 10, 350 },
+    { 295, 150, 10, 250 },
+    { 0, 890, WINDOW_WIDTH, 10 }
   };
-  World *world = new_world(r, 4);
+  World *world = new_world(r, 5);
   Player *player = new_player(10.f, 10.f);
   GameContext context = { window, renderer, player, world };
 
