@@ -2,6 +2,7 @@
 #define _PLAYER
 
 #include <SDL.h>
+#include <core/vec.h>
 
 typedef struct PlayerInputState {
   SDL_bool up;
@@ -11,13 +12,13 @@ typedef struct PlayerInputState {
 } PlayerInputState;
 
 typedef struct Player {
-  SDL_Point         position;
+  vec2f             position;
   PlayerInputState  input_state;
 
   /**
    * Move player position by provided x/y offset
   */
-  void (*move)(struct Player *player, int x, int y);
+  void (*move)(struct Player *player, const vec2f *p);
 
   /**
    * Handles player input
@@ -35,7 +36,7 @@ typedef struct Player {
   void (*draw)(struct Player *player, SDL_Renderer *renderer);
 } Player;
 
-Player* new_player(int x, int y);
+Player* new_player(float x, float y);
 void free_player(Player *player);
 
 #endif // _PLAYER

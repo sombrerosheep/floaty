@@ -1,8 +1,8 @@
 #include <Player.h>
+#include <stdio.h>
 
-void player_move(Player *player, int x, int y) {
-  player->position.x += x;
-  player->position.y += y;
+void player_move(Player *player, const vec2f *p) {
+  player->position = add_vec2f(&player->position, p);
 }
 
 void player_handle_input(Player *player, const Uint8 *keys) {
@@ -32,32 +32,35 @@ void player_handle_input(Player *player, const Uint8 *keys) {
 }
 
 void player_update(Player *player) {
-  const int SPEED = 3;
-  SDL_Point movement = { 0, 0 };
+  const float SPEED = 3.f;
+  vec2f direction_vec = { 0.f, 0.f };
 
   if (player->input_state.up) {
-    movement.y -= SPEED;
+    direction_vec.y -= 1;
   }
   if (player->input_state.down) {
-    movement.y += SPEED;
+    direction_vec.y += 1;
   }
   if (player->input_state.left) {
-    movement.x -= SPEED;
+    direction_vec.x -= 1;
   }
   if (player->input_state.right) {
-    movement.x += SPEED;
+    direction_vec.x += 1;
   }
 
-  player->move(player, movement.x, movement.y);
+  vec2f normalized = normalize_vec2f(&direction_vec);
+  vec2f movement = mul_vec2f_float(&normalized, SPEED);
+
+  player->move(player, &movement);
 }
 
 void player_draw(Player *player, SDL_Renderer *renderer) {
-  SDL_Rect rect = { player->position.x, player->position.y, 10, 10 };
+  SDL_Rect rect = { (int)player->position.x, (int)player->position.y, 10, 10 };
   SDL_SetRenderDrawColor(renderer, 0xF1, 0xF1, 0xF1, 0xFF);
   SDL_RenderFillRect(renderer, &rect);
 }
 
-Player* new_player(int x, int y) {
+Player* new_player(float x, float y) {
   Player *player = (Player*)SDL_calloc(1, sizeof(Player));
 
   player->handle_input = player_handle_input;
