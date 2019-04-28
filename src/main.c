@@ -43,7 +43,7 @@ int main(int argc, char** argv) {
     { 250, 150, 10, 250 }
   };
   World *world = new_world(r, 4);
-  Player *player = new_player(10, 10);
+  Player *player = new_player(10.f, 10.f);
   GameContext context = { window, renderer, player, world };
 
   SDL_Event event;
