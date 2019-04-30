@@ -51,11 +51,11 @@ SDL_Point* get_collision_points(vec2f player_size) {
     player_col_points[DIRECTION_TOP * COLLISION_POINTS_PER_DIRECTION + i] =
       (SDL_Point){ p_x_offset * i + p_x_offset, 0 };
     player_col_points[DIRECTION_BOTTOM * COLLISION_POINTS_PER_DIRECTION + i] =
-      (SDL_Point){ p_x_offset * i + p_x_offset, player_size.y };
+      (SDL_Point){ p_x_offset * i + p_x_offset, player_size.y - 1 };
     player_col_points[DIRECTION_LEFT * COLLISION_POINTS_PER_DIRECTION + i] =
       (SDL_Point){ 0, p_y_offset * i + p_y_offset };
     player_col_points[DIRECTION_RIGHT * COLLISION_POINTS_PER_DIRECTION + i] =
-      (SDL_Point){ player_size.x, p_y_offset * i + p_y_offset };
+      (SDL_Point){ player_size.x - 1, p_y_offset * i + p_y_offset };
   }
 
   return player_col_points;
