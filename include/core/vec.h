@@ -1,6 +1,8 @@
 #ifndef _FLOATY_CORE_VEC
 #define _FLOATY_CORE_VEC
 
+#include <stdarg.h>
+
 typedef struct vec2f {
   float x;
   float y;
@@ -10,6 +12,11 @@ typedef struct vec2f {
  * add's a vec2f to another vec2f.
  */
 vec2f add_vec2f(const vec2f *v, const vec2f *d);
+
+/**
+ * add's multiple vec2fs and returns the result
+ */
+vec2f add_vec2fs(int count, ...);
 
 /**
  * add's a vec2f and a scalar float.

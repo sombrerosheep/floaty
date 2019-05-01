@@ -11,6 +11,21 @@ vec2f add_vec2f(const vec2f *v, const vec2f *d) {
   return res;
 }
 
+vec2f add_vec2fs(int count, ...) {
+  vec2f vec = {0.f, 0.f };
+  va_list args;
+  va_start(args, count);
+
+  for (int i = 0; i < count; i++) {
+    vec2f v = va_arg(args, vec2f);
+    vec.x += v.x;
+    vec.y += v.y;
+  }
+
+  va_end(args);
+  return vec;
+}
+
 vec2f add_vec2f_float(const vec2f *v, float f) {
 vec2f res = {
     v->x + f,
