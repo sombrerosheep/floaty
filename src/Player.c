@@ -1,5 +1,6 @@
 #include <Player.h>
 #include <stdio.h>
+#include <core/rectf.h>
 
 #define PLAYER_MOVE_SPEED 3.0f
 #define COLLISION_SOLVER_ITERATIONS 3
@@ -39,35 +40,34 @@ void player_handle_input(Player *player, const Uint8 *keys) {
   player->velocity = normalize_vec2f(&player->velocity);
 }
 
-SDL_Point* get_collision_points(vec2f player_size) {
+vec2f* get_collision_points(vec2f player_size) {
   // dynamically setup collision points for the character based on size.
   // TODO: Move this to new_player
   float p_x_offset = player_size.x / (COLLISION_POINTS_PER_DIRECTION + 1);
   float p_y_offset = player_size.y / (COLLISION_POINTS_PER_DIRECTION + 1);
 
-  SDL_Point *player_col_points = (SDL_Point*)SDL_calloc(4 * COLLISION_POINTS_PER_DIRECTION, sizeof(SDL_Point));
+  vec2f *player_col_points = (vec2f*)SDL_calloc(4 * COLLISION_POINTS_PER_DIRECTION, sizeof(vec2f));
 
   for (int i = 0; i < COLLISION_POINTS_PER_DIRECTION; i++) {
     player_col_points[DIRECTION_TOP * COLLISION_POINTS_PER_DIRECTION + i] =
-      (SDL_Point){ p_x_offset * i + p_x_offset, 0 };
+      (vec2f){ p_x_offset * (float)i + p_x_offset, 0.f };
     player_col_points[DIRECTION_BOTTOM * COLLISION_POINTS_PER_DIRECTION + i] =
-      (SDL_Point){ p_x_offset * i + p_x_offset, player_size.y - 1 };
+      (vec2f){ p_x_offset * i + p_x_offset, player_size.y};
     player_col_points[DIRECTION_LEFT * COLLISION_POINTS_PER_DIRECTION + i] =
-      (SDL_Point){ 0, p_y_offset * i + p_y_offset };
+      (vec2f){ 0.f, p_y_offset * i + p_y_offset };
     player_col_points[DIRECTION_RIGHT * COLLISION_POINTS_PER_DIRECTION + i] =
-      (SDL_Point){ player_size.x - 1, p_y_offset * i + p_y_offset };
+      (vec2f){ player_size.x, p_y_offset * i + p_y_offset };
   }
 
   return player_col_points;
 }
 
-// TODO: bottom and right collisions are off by (it seems) 1px  
 void handle_world_collisions(Player *player, const World *world) {
   SDL_bool collide_x = SDL_TRUE;
   SDL_bool collide_y_top = SDL_TRUE;
   SDL_bool collide_y_bot = SDL_TRUE;
 
-  SDL_Point *player_col_points = get_collision_points(player->size);
+  vec2f *player_col_points = get_collision_points(player->size);
 
   for (
     int iteration = 0;
@@ -90,10 +90,10 @@ void handle_world_collisions(Player *player, const World *world) {
     ) {
       for (int dir = 0; dir < 4; dir++) {
         // Skip an iteration if we're not moving that direction
-        if (dir == DIRECTION_TOP  && next_movement_vec.y > 0) continue;
-        if (dir == DIRECTION_BOTTOM && next_movement_vec.y < 0) continue;
-        if (dir == DIRECTION_LEFT && next_movement_vec.x > 0) continue;
-        if (dir == DIRECTION_RIGHT && next_movement_vec.x < 0) continue;
+        if (dir == DIRECTION_TOP  && next_movement_vec.y > 0.f) continue;
+        if (dir == DIRECTION_BOTTOM && next_movement_vec.y < 0.f) continue;
+        if (dir == DIRECTION_LEFT && next_movement_vec.x > 0.f) continue;
+        if (dir == DIRECTION_RIGHT && next_movement_vec.x < 0.f) continue;
 
         if (dir < 2) {
           target_movement_vec.y = next_movement_vec.y;
@@ -102,7 +102,7 @@ void handle_world_collisions(Player *player, const World *world) {
         }
 
         while (SDL_TRUE) {
-          SDL_Point col_points[COLLISION_POINTS_PER_DIRECTION];
+          vec2f col_points[COLLISION_POINTS_PER_DIRECTION];
           // TODO: Make add_vec2f a variadic
           for (int p = 0; p < COLLISION_POINTS_PER_DIRECTION; p++) {
             col_points[p].x = player_col_points[dir * COLLISION_POINTS_PER_DIRECTION + p].x + player->position.x + target_movement_vec.x;
@@ -111,14 +111,26 @@ void handle_world_collisions(Player *player, const World *world) {
 
           // TODO: Variadic "if any SDL_Point in SDL_Rect". Then COLLISION_POINTS_PER_DIRECTION
           //       can be changed at any time.
+          rectf rec = {
+            world->geometry.rects[geometry].x,
+            world->geometry.rects[geometry].y,
+            world->geometry.rects[geometry].w,
+            world->geometry.rects[geometry].h
+          };
           if (
-            SDL_PointInRect(&col_points[0], &world->geometry.rects[geometry]) ||
-            SDL_PointInRect(&col_points[1], &world->geometry.rects[geometry])
+            vec2f_in_rectf(&col_points[0], &rec) ||
+            vec2f_in_rectf(&col_points[0], &rec)
           ) {
             if (dir == DIRECTION_TOP) target_movement_vec.y++;
             if (dir == DIRECTION_BOTTOM) target_movement_vec.y--;
             if (dir == DIRECTION_LEFT) target_movement_vec.x++;
             if (dir == DIRECTION_RIGHT) target_movement_vec.x--;
+          // } else if (dir == DIRECTION_RIGHT &&
+          //   player->position.x > 290.0 &&
+          //   geometry == 3
+          // ) {
+          //   // 295, 150, 10, 250
+          //   printf("You should be colliding\n");
           } else {
             break;
           }
@@ -133,10 +145,10 @@ void handle_world_collisions(Player *player, const World *world) {
       } // END direction loop
 
       // set detected collision type
-      if (next_movement_vec.y > original_movment_vec.y && original_movment_vec.y < 0) {
+      if (next_movement_vec.y > original_movment_vec.y && original_movment_vec.y < 0.f) {
         collide_y_top = SDL_TRUE;
       }
-      if (next_movement_vec.y < original_movment_vec.y && original_movment_vec.y > 0) {
+      if (next_movement_vec.y < original_movment_vec.y && original_movment_vec.y > 0.f) {
         collide_y_bot = SDL_TRUE;
       }
       if (SDL_abs(next_movement_vec.x - original_movment_vec.x) > 0) {
@@ -146,11 +158,11 @@ void handle_world_collisions(Player *player, const World *world) {
 
     if (collide_y_bot || collide_y_top) {
       player->position.y += next_movement_vec.y;
-      player->velocity.y = 0;
+      player->velocity.y = 0.f;
     }
     if (collide_x) {
       player->position.x += next_movement_vec.x;
-      player->velocity.x = 0;
+      player->velocity.x = 0.f;
     }
   } // END COLLISION_SOLVER_ITERATIONS
 
