@@ -11,7 +11,7 @@ typedef struct rectf {
   float h;
 } rectf;
 
-inline SDL_bool vec2f_in_rectf(const vec2f *vec, const rectf *rect) {
+SDL_bool vec2f_in_rectf(const vec2f *vec, const rectf *rect) {
   return vec->x > rect->x &&
          vec->x < rect->x + rect->w &&
          vec->y > rect->y &&
