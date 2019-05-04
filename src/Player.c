@@ -52,11 +52,11 @@ vec2f* get_collision_points(vec2f player_size) {
     player_col_points[DIRECTION_TOP * COLLISION_POINTS_PER_DIRECTION + i] =
       (vec2f){ p_x_offset * (float)i + p_x_offset, 0.f };
     player_col_points[DIRECTION_BOTTOM * COLLISION_POINTS_PER_DIRECTION + i] =
-      (vec2f){ p_x_offset * i + p_x_offset, player_size.y};
+      (vec2f){ p_x_offset * i + p_x_offset, player_size.y - 1.f};
     player_col_points[DIRECTION_LEFT * COLLISION_POINTS_PER_DIRECTION + i] =
       (vec2f){ 0.f, p_y_offset * i + p_y_offset };
     player_col_points[DIRECTION_RIGHT * COLLISION_POINTS_PER_DIRECTION + i] =
-      (vec2f){ player_size.x, p_y_offset * i + p_y_offset };
+      (vec2f){ player_size.x - 1.f, p_y_offset * i + p_y_offset };
   }
 
   return player_col_points;
