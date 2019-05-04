@@ -111,15 +111,9 @@ void handle_world_collisions(Player *player, const World *world) {
 
           // TODO: Variadic "if any SDL_Point in SDL_Rect". Then COLLISION_POINTS_PER_DIRECTION
           //       can be changed at any time.
-          rectf rec = {
-            world->geometry.rects[geometry].x,
-            world->geometry.rects[geometry].y,
-            world->geometry.rects[geometry].w,
-            world->geometry.rects[geometry].h
-          };
           if (
-            vec2f_in_rectf(&col_points[0], &rec) ||
-            vec2f_in_rectf(&col_points[0], &rec)
+            vec2f_in_rectf(&col_points[0], &world->geometry.rects[geometry]) ||
+            vec2f_in_rectf(&col_points[0], &world->geometry.rects[geometry])
           ) {
             if (dir == DIRECTION_TOP) target_movement_vec.y++;
             if (dir == DIRECTION_BOTTOM) target_movement_vec.y--;

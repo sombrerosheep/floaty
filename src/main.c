@@ -2,6 +2,7 @@
 #include <SDL.h>
 
 #include <Game.h>
+#include <core/rectf.h>
 
 const int WINDOW_WIDTH = 600;
 const int WINDOW_HEIGHT = 900;
@@ -36,12 +37,12 @@ int main(int argc, char** argv) {
     return -1;
   }
 
-  SDL_Rect r[] = {
-    { 145, 350, 300, 10 },
-    { 170, 325, 10, 350 },
-    { 420, 300, 10, 350 },
-    { 295, 150, 10, 250 },
-    { 0, 890, WINDOW_WIDTH, 10 }
+  rectf r[] = {
+    { 145.f, 350.f, 300.f, 10.f },
+    { 170.f, 325.f, 10.f, 350.f },
+    { 420.f, 300.f, 10.f, 350.f },
+    { 295.f, 150.f, 10.f, 250.f },
+    { 0.f, 890.f, (float)WINDOW_WIDTH, 10.f }
   };
   World *world = new_world(r, 5);
   Player *player = new_player(10.f, 10.f);
