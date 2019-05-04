@@ -44,11 +44,16 @@ endif()
 # of the SDL shared libs downloaded from https://www.libsdl.org/
 # This project does dynamic link
 # TODO: Use findSDL2 cmake; several options/scripts are available
-set(SDL2_INCLUDE_DIR "$ENV{SDL_SHARED}/debug/include/")
-set(SDL2_LIBRARIES
-  "$ENV{SDL_SHARED}/${CMAKE_BUILD_TYPE}/lib/${PROCESSOR_ARCH}/SDL2main.lib"
-  "$ENV{SDL_SHARED}/${CMAKE_BUILD_TYPE}/lib/${PROCESSOR_ARCH}/SDL2.lib"
-)
+if(MSVC)
+  set(SDL2_INCLUDE_DIR "$ENV{SDL_SHARED}/debug/include/")
+  set(SDL2_LIBRARIES
+    "$ENV{SDL_SHARED}/${CMAKE_BUILD_TYPE}/lib/${PROCESSOR_ARCH}/SDL2main.lib"
+    "$ENV{SDL_SHARED}/${CMAKE_BUILD_TYPE}/lib/${PROCESSOR_ARCH}/SDL2.lib"
+  )
+elseif(UNIX)
+  set(SDL2_INCLUDE_DIR /usr/include/SDL2)
+  set(SDL2_LIBRARIES libSDL2main.so libSDL2.so)
+endif()
 
 ##### Info output #####
 message(STATUS "")
@@ -70,7 +75,7 @@ message(STATUS "  Source Dir:           ${floaty_source_dir}")
 message(STATUS "  Include Dir:          ${floaty_include_dir}")
 message(STATUS "")
 message(STATUS "Dependency Report:")
-message(STATUS "  SDL2 Include Dir:  ${SDL_INCLUDE_DIR}")
+message(STATUS "  SDL2 Include Dir:  ${SDL2_INCLUDE_DIR}")
 message(STATUS "  SDL2 Libraries:")
 foreach(lib ${SDL2_LIBRARIES})
   message(STATUS "    ${lib}")
