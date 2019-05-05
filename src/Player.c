@@ -105,8 +105,7 @@ void handle_world_collisions(Player *player, const World *world) {
           vec2f col_points[COLLISION_POINTS_PER_DIRECTION];
           // TODO: Make add_vec2f a variadic
           for (int p = 0; p < COLLISION_POINTS_PER_DIRECTION; p++) {
-            col_points[p].x = player_col_points[dir * COLLISION_POINTS_PER_DIRECTION + p].x + player->position.x + target_movement_vec.x;
-            col_points[p].y = player_col_points[dir * COLLISION_POINTS_PER_DIRECTION + p].y + player->position.y + target_movement_vec.y;
+            col_points[p] = add_vec2fs(3, player_col_points[dir * COLLISION_POINTS_PER_DIRECTION + p], player->position, target_movement_vec);
           }
 
           // TODO: Variadic "if any SDL_Point in SDL_Rect". Then COLLISION_POINTS_PER_DIRECTION
@@ -119,12 +118,6 @@ void handle_world_collisions(Player *player, const World *world) {
             if (dir == DIRECTION_BOTTOM) target_movement_vec.y--;
             if (dir == DIRECTION_LEFT) target_movement_vec.x++;
             if (dir == DIRECTION_RIGHT) target_movement_vec.x--;
-          // } else if (dir == DIRECTION_RIGHT &&
-          //   player->position.x > 290.0 &&
-          //   geometry == 3
-          // ) {
-          //   // 295, 150, 10, 250
-          //   printf("You should be colliding\n");
           } else {
             break;
           }
