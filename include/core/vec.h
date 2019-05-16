@@ -23,6 +23,8 @@ vec2f add_vec2fs(int count, ...);
  */
 vec2f add_vec2f_float(const vec2f *v, float f);
 
+vec2f sub_vec2f(const vec2f *v, const vec2f *d);
+
 /**
  * multiplies a vec2f by a scalar float.
  */

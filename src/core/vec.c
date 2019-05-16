@@ -35,6 +35,15 @@ vec2f res = {
   return res;
 }
 
+vec2f sub_vec2f(const vec2f *v, const vec2f *d) {
+  vec2f res = {
+    d->x - v->x,
+    d->y - v->y
+  };
+
+  return res;
+}
+
 vec2f mul_vec2f_float(const vec2f *v, float f) {
   vec2f res = {
     v->x * f,

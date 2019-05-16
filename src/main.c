@@ -36,16 +36,23 @@ int main(int argc, char** argv) {
     printf("Unable to create renderer:\n%s\n", SDL_GetError());
     return -1;
   }
+  SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
   rectf r[] = {
     { 145.f, 350.f, 300.f, 10.f },
     { 170.f, 325.f, 10.f, 350.f },
     { 420.f, 300.f, 10.f, 350.f },
     { 295.f, 150.f, 10.f, 250.f },
-    { 0.f, 890.f, (float)WINDOW_WIDTH, 10.f }
+    // { 145.f, 650.f, 300.f, 10.f },
+    { 0.f, 0.f, (float)WINDOW_WIDTH, 10.f }, // bounds top
+    { 0.f, 890.f, (float)WINDOW_WIDTH, 10.f }, // bounds bot
+    { 0.f, 0.f, 10.f, (float)WINDOW_HEIGHT }, // bounds left
+    { (float)WINDOW_WIDTH - 10.f, 0.f, 10.f, (float)WINDOW_HEIGHT }, // bounds left
   };
-  World *world = new_world(r, 5);
+  World *world = new_world(r, 8);
   Player *player = new_player(10.f, 10.f);
+  player->position.x = 300.f;
+  player->position.y = 435.f;
   GameContext context = { window, renderer, player, world };
 
   SDL_Event event;

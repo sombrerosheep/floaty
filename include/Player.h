@@ -49,4 +49,6 @@ Player* new_player(float x, float y);
  */
 void free_player(Player *player);
 
+void raycast(Player *player, World *world, SDL_Renderer *renderer);
+
 #endif // _PLAYER

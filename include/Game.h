@@ -16,4 +16,7 @@ void floaty_handle_input(GameContext *ctx);
 void floaty_update(GameContext *ctx);
 void floaty_draw(GameContext *ctx);
 
+unsigned int get_delta_ticks(void);
+float get_delta_time(void);
+
 #endif // _FLOATY_GAME
