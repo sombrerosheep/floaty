@@ -135,6 +135,7 @@ SDL_Rect make_raycast_point(const vec2f *vec) {
   return (SDL_Rect){ vec->x, vec->y, 3, 3 };
 }
 
+// Initial cut...Draws rays every X degrees as specified
 void cast_rays(Player *player, World *world, SDL_Renderer *renderer) {
   vec2f player_center = {
     player->position.x + player->size.x / 2,
@@ -175,6 +176,134 @@ void draw_line(const linef *line, SDL_Renderer *renderer) {
   );
 }
 
+intersect* get_collision_point_on_segment(const linef *ray, const linef *segment) {
+  intersect *intersection = (intersect*)SDL_calloc(1, sizeof(intersect));
+  if (do_segments_intersect(ray, segment, intersection)) {
+    return intersection;
+  }
+
+  SDL_free(intersection);
+  return NULL;
+}
+
+intersect* get_collision_point_on_rectf(const linef *ray, const rectf *rect) {
+  linef *segs = get_segments_from_rect(rect);
+  intersect *collision_point = NULL;
+
+  for (int i = 0; i < 4; i++) {
+    intersect *intersection = get_collision_point_on_segment(ray, &segs[i]);
+
+    if (intersection != NULL) {
+      if (collision_point == NULL) {
+        collision_point = (intersect*)SDL_calloc(1, sizeof(intersect));
+        *collision_point = *intersection;
+      }
+
+      if (intersection->t1 < collision_point->t1) {
+        *collision_point = *intersection;
+      }
+    }
+    SDL_free(intersection);
+  }
+
+  SDL_free(segs);
+  return collision_point;
+}
+
+vec2f get_collision_point_on_world_geometry(const linef *ray, const rectf *rects, int num_rects) {
+  intersect *collision_point = NULL;
+
+  for (int r = 0; r < num_rects; r++) {
+    intersect* intersection = get_collision_point_on_rectf(ray, &rects[r]);
+
+    if (intersection != NULL) {
+      if (collision_point == NULL) {
+        collision_point = (intersect*)SDL_calloc(1, sizeof(intersect));
+        *collision_point = *intersection;
+      }
+
+      if (intersection->t1 < collision_point->t1) {
+        *collision_point = *intersection;
+      }
+    }
+
+    SDL_free(intersection);
+  }
+
+  vec2f result = { collision_point->point.x, collision_point->point.y };
+  SDL_free(collision_point);
+  return result;
+}
+
+linef make_ray(float angle, const vec2f *origin) {
+  vec2f ray_vec = {
+    SDL_cosf(angle),
+    SDL_sinf(angle)
+  };
+  return (linef){
+    { origin->x, origin->y },
+    { origin->x + ray_vec.x, origin->y + ray_vec.y }
+  };
+}
+
+// casts rays at each unique point in the world geometry and
+// captures each collision for a proper visibility polygon.
+void unique_rays(Player *player, World * world, SDL_Renderer *renderer) {
+  vec2f player_center = {
+    player->position.x + player->size.x / 2,
+    player->position.y + player->size.y / 2
+  };
+  
+  // we'll check against each unique point in the world
+  // each piece of world geometry is a rect which has 4 points
+  int num_angle_points = world->geometry.count * 4;
+  vec2f *angle_points = (vec2f*)SDL_calloc(num_angle_points, sizeof (vec2f));
+
+  // We'll cast 3 rays for each unique point.
+  int num_hit_coords = num_angle_points * 3;
+  vec2f *hit_coords = (vec2f*)SDL_calloc(num_hit_coords, sizeof(vec2f));
+  float angle_diff = 0.0001f;
+
+  // get all the points
+  for (int i = 0, g = 0; g < world->geometry.count; i += 4, g++) {
+    linef* world_segments = get_segments_from_rect(&world->geometry.rects[g]);
+    angle_points[i] = world_segments[0].end;
+    angle_points[i + 1] = world_segments[1].end;
+    angle_points[i + 2] = world_segments[2].end;
+    angle_points[i + 3] = world_segments[3].end;
+
+    SDL_free(world_segments);
+  }
+
+  draw_points(renderer, angle_points, num_angle_points);
+
+  for (int i = 0, h = 0; i < num_angle_points; i++, h += 3) {
+    vec2f diff = sub_vec2f(&player_center, &angle_points[i]);
+    float angle = SDL_atan2f(diff.y, diff.x);
+    float angle_plus = angle + angle_diff;
+    float angle_minus = angle - angle_diff;
+    linef ray = make_ray(angle, &player_center);
+    linef ray_plus = make_ray(angle_plus, &player_center);
+    linef ray_minus = make_ray(angle_minus, &player_center);
+
+    // get collision point for each angle
+    // hit coords are returning the point they're aiming at,
+    // and not the point they first collide with something.
+    hit_coords[h] = get_collision_point_on_world_geometry(&ray, world->geometry.rects, world->geometry.count);
+    hit_coords[h + 1] = get_collision_point_on_world_geometry(&ray_plus, world->geometry.rects, world->geometry.count);
+    hit_coords[h + 2] = get_collision_point_on_world_geometry(&ray_minus, world->geometry.rects, world->geometry.count);
+
+  
+    draw_lines(renderer, &player_center, &hit_coords[h], 3);
+    draw_points(renderer, &hit_coords[h], 3);
+  }
+
+  SDL_free(angle_points);
+  SDL_free(hit_coords);
+}
+
+// casts specified amount of rays in each direction and
+// capturing the hits on world geometry
 void single_ray(Player *player, World *world, SDL_Renderer *renderer) {
   vec2f player_center = {
     player->position.x + player->size.x / 2,
@@ -251,9 +380,24 @@ void single_ray(Player *player, World *world, SDL_Renderer *renderer) {
   SDL_free(ray_coords);
 }
 
+float print_fps() {
+  static unsigned int last_ticks = 0;
+  unsigned int this_ticks = SDL_GetTicks();
+  unsigned int frame_ticks = this_ticks - last_ticks;
+  float frame_ms = frame_ticks / 1000.f;
+
+  if (frame_ticks != last_ticks) {
+    printf("FPS: %f\n\n", 1.f / frame_ms);
+  }
+
+  last_ticks = this_ticks;
+}
+
 void raycast(Player *player, World *world, SDL_Renderer *renderer) {
+  print_fps();
   // cast_rays(player, world, renderer);
-  single_ray(player, world, renderer);
+  // single_ray(player, world, renderer);
+  unique_rays(player, world, renderer);
 }
 
 //////////////////////////////////////////////////////////////////////////////?

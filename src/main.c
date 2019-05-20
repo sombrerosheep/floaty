@@ -51,8 +51,10 @@ int main(int argc, char** argv) {
   };
   World *world = new_world(r, 8);
   Player *player = new_player(10.f, 10.f);
-  player->position.x = 300.f;
-  player->position.y = 435.f;
+  // player->position.x = 300.f;
+  player->position.x = 227.f;
+  // player->position.y = 435.f;
+  player->position.y = 385.f;
   GameContext context = { window, renderer, player, world };
 
   SDL_Event event;
