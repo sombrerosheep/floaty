@@ -9,11 +9,18 @@
 #define COLLISION_SOLVER_ITERATIONS 3
 #define COLLISION_POINTS_PER_DIRECTION 2
 
+enum RECT_POINT {
+  RECT_POINT_UL = 0,
+  RECT_POINT_UR = 1,
+  RECT_POINT_LL = 2,
+  RECT_POINT_LR = 3
+};
+
 enum DIRECTION {
-  DIRECTION_TOP = 0,
-  DIRECTION_BOTTOM = 1,
-  DIRECTION_LEFT = 2,
-  DIRECTION_RIGHT = 3
+  DIRECTION_TOP     = 0,
+  DIRECTION_BOTTOM  = 1,
+  DIRECTION_LEFT    = 2,
+  DIRECTION_RIGHT   = 3
 };
 
 void player_move(Player *player, const vec2f *p) {
@@ -181,6 +188,89 @@ void raycast(Player *player, World *world, SDL_Renderer *renderer) {
   unique_rays(player, world, renderer);
 }
 
+void handle_world_collisions2(Player *player, const World *world) {
+  if (SDL_fabsf(player->velocity.x) < 0.001 && SDL_fabsf(player->velocity.y) < 0.001) {
+    return;
+  }
+
+  vec2f adjusted_velocity = player->velocity;
+  
+  vec2f frame_dependent_movement = mul_vec2f_float(&player->velocity, PLAYER_MOVE_SPEED);
+  // vec2f next_movement_vec = mul_vec2f_float(&frame_dependent_movement, get_delta_time());
+  vec2f next_movment_vec = frame_dependent_movement;
+  vec2f next_point = {
+    player->position.x + next_movment_vec.x,
+    player->position.y + next_movment_vec.y
+  };
+  float collision_width = SDL_fabsf(next_point.x - player->position.x) + player->size.x;
+  float collision_height = SDL_fabsf(next_point.y - player->position.y) + player->size.y;
+
+  rectf movement_box = {
+    SDL_min(player->position.x, next_point.x),
+    SDL_min(player->position.y, next_point.y),
+    collision_width,
+    collision_height
+  };
+
+  for (int geometry = 0; geometry < world->geometry.count; geometry++) {
+    if (rectf_intersects(&movement_box, &world->geometry.rects[geometry])) {
+      // now do the raycast
+      linef *segments = get_segments_from_rectf(&world->geometry.rects[geometry]);
+      vec2f points[4] = {
+        { player->position.x, player->position.y },                                       // RECT_POINT_UL
+        { player->position.x + player->size.x - 1, player->position.y },                  // RECT_POINT_UR
+        { player->position.x, player->position.y + player->size.y },                      // RECT_POINT_LL
+        { player->position.x + player->size.x - 1, player->position.y + player->size.y }  // RECT_POINT_LR
+      };
+      intersect collision_points[4];
+
+      // get the closest collision point for each of the points on the player
+      // get the smallest of that and apply offset from that points reference
+      
+      // loop points on player
+      for (int p = 0; p < 4; p++) {
+        intersect intersection = { { 0, 0 }, -1 };
+
+        // loop segments on collided geometry
+        for (int s = 0; s < 4; s++) {
+          intersect iter_intersection = {{0.f, 0.f}, 0.f };
+          linef point_ray = {
+            points[p],
+            add_vec2f(&points[p], &next_movment_vec)
+          };
+
+          // check intersection
+          if (do_segments_intersect(&point_ray, &segments[s], &iter_intersection)) {
+            // update intersection
+            if (intersection.t1 < 0 || iter_intersection.t1 < intersection.t1) {
+              intersection = iter_intersection;
+            }
+          }
+        }
+
+        // set our final intersection
+        collision_points[p] = intersection;
+      }
+
+      SDL_free(segments);
+
+      // see which intersection is closest and set that offset as our velocity
+      int closest = -1;
+      for (int p = 0; p < 4; p++) {
+        // if closest is < 0 then its unitialized
+        // if collision_points[p].t1 < 0 its uninitialized
+        if (collision_points[p].t1 < 0) continue;
+        if (closest < 0 || collision_points[p].t1 < collision_points[closest].t1) {
+          closest = p;
+        }
+      }
+
+      if (closest < 0) break; // there was no hit...why are we here?
+      player->velocity = sub_vec2f(&points[closest], &collision_points[closest].point);
+    }
+  }
+}
+
 void handle_world_collisions(Player *player, const World *world) {
   SDL_bool collide_x = SDL_TRUE;
   SDL_bool collide_y_top = SDL_TRUE;
@@ -278,10 +368,12 @@ void handle_world_collisions(Player *player, const World *world) {
 }
 
 void player_update(Player *player, const World *world) {
-  handle_world_collisions(player, world);
+  // handle_world_collisions(player, world);
+  handle_world_collisions2(player, world);
 
-  vec2f movement = mul_vec2f_float(&player->velocity, PLAYER_MOVE_SPEED);
-  player->move(player, &movement);
+  player->move(player, &player->velocity);
+  // vec2f movement = mul_vec2f_float(&player->velocity, PLAYER_MOVE_SPEED);
+  // player->move(player, &movement);
 }
 
 void player_draw(Player *player, SDL_Renderer *renderer) {
