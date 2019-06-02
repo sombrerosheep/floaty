@@ -1,9 +1,6 @@
 #include <stdio.h>
 #include <SDL.h>
 
-#include <Game.h>
-#include <core/rectf.h>
-
 const int WINDOW_WIDTH = 600;
 const int WINDOW_HEIGHT = 900;
 
@@ -37,17 +34,6 @@ int main(int argc, char** argv) {
     return -1;
   }
 
-  rectf r[] = {
-    { 145.f, 350.f, 300.f, 10.f },
-    { 170.f, 325.f, 10.f, 350.f },
-    { 420.f, 300.f, 10.f, 350.f },
-    { 295.f, 150.f, 10.f, 250.f },
-    { 0.f, 890.f, (float)WINDOW_WIDTH, 10.f }
-  };
-  World *world = new_world(r, 5);
-  Player *player = new_player(10.f, 10.f);
-  GameContext context = { window, renderer, player, world };
-
   SDL_Event event;
 
   while (SDL_TRUE) {
@@ -61,14 +47,8 @@ int main(int argc, char** argv) {
         break;
       }
     }
-
-    floaty_handle_input(&context);
-    floaty_update(&context);
-    floaty_draw(&context);
   }
 
-  free_player(player);
-  free_world(world);
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   return 0;
