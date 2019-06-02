@@ -12,6 +12,9 @@ typedef struct rectf {
 } rectf;
 
 SDL_bool vec2f_in_rectf(const vec2f *vec, const rectf *rect);
+rectf rectf_intersection(const rectf *a, const rectf *b);
 SDL_Rect rectf_to_sdl_rect(const rectf *rect);
+rectf make_containment_rectf(const rectf *a, const rectf *b);
+SDL_bool rectf_intersects(const rectf *a, const rectf *b);
 
 #endif

@@ -62,6 +62,70 @@ vec2f* get_collision_points(vec2f player_size) {
   return player_col_points;
 }
 
+void handle_world_collisions2(Player *player, const World *world) {
+  // create rect containing player-start and player-end (with velocity)
+  // loop over world geometry
+  // if a collision, get the intersection
+  // back-off by intersection on velocity vector
+
+  vec2f projected_movment_vec = mul_vec2f_float(&player->velocity, PLAYER_MOVE_SPEED);
+  rectf current_player = {
+    player->position.x,
+    player->position.y,
+    player->size.x,
+    player->size.y
+  };
+  rectf projected_final_pos = current_player;
+  projected_final_pos.x += projected_movment_vec.x;
+  projected_final_pos.y += projected_movment_vec.y;
+  rectf movment_rect = make_containment_rectf(&current_player, &projected_final_pos);
+  vec2f diff = { 0.f, 0.f };
+  vec2f next_vel = mul_vec2f_float(&player->velocity, PLAYER_MOVE_SPEED);
+
+  for (int g = 0; g < world->geometry.count; g++) {
+    if (rectf_intersects(&world->geometry.rects[g], &projected_final_pos)) {
+      rectf intersect = rectf_intersection(&world->geometry.rects[g], &projected_final_pos);
+
+      // get magnitude of intersect-rect
+      // mul by movement vec
+
+      // if (player->velocity.x > 0.f && intersect.w > 1.f) {
+      //   // projected_final_pos.x -= intersect.w;
+      //   // diff.x = -1.f * intersect.w;
+      //   diff.x--;
+      // }
+      // if (player->velocity.x < 0.f && intersect.w > 1.f) {
+      //   // projected_final_pos.x += intersect.w;
+      //   // diff.x = 1.f * intersect.w;
+      //   diff.x++;
+      // }
+      // if (player->velocity.y > 0.f && intersect.h > 1.f) {
+      //   // projected_final_pos.y -= intersect.h;
+      //   // diff.y = -1.f * intersect.h;
+      //   diff.y--;
+      // }
+      // if (player->velocity.y < 0.f && intersect.h > 1.f) {
+      //   // projected_final_pos.y += intersect.h;
+      //   // diff.y = 1.f * intersect.h;
+      //   diff.y++;
+      // }
+
+      vec2f intersect_vec = { intersect.w, intersect.h };
+      float intersect_mag = vec2f_magnitude(&intersect_vec);
+      float projected_mag = vec2f_magnitude(&projected_movment_vec);
+      float adjusted_mag = projected_mag - intersect_mag;
+
+      player->velocity = mul_vec2f_float(&player->velocity, adjusted_mag);
+      return;
+    }
+  }
+
+  player->velocity = next_vel;
+
+  // player->position.x = projected_final_pos.x + diff.x;
+  // player->position.y = projected_final_pos.y + diff.y;
+}
+
 void handle_world_collisions(Player *player, const World *world) {
   SDL_bool collide_x = SDL_TRUE;
   SDL_bool collide_y_top = SDL_TRUE;
@@ -157,10 +221,12 @@ void handle_world_collisions(Player *player, const World *world) {
 }
 
 void player_update(Player *player, const World *world) {
-  handle_world_collisions(player, world);
+  // handle_world_collisions(player, world);
+  handle_world_collisions2(player, world);
 
-  vec2f movement = mul_vec2f_float(&player->velocity, PLAYER_MOVE_SPEED);
-  player->move(player, &movement);
+  // vec2f movement = mul_vec2f_float(&player->velocity, PLAYER_MOVE_SPEED);
+  // player->move(player, &movement);
+  player->move(player, &player->velocity);
 }
 
 void player_draw(Player *player, SDL_Renderer *renderer) {
