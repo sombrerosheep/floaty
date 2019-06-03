@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <SDL.h>
 
+#include <core/rectf.h>
+#include <core/vec2f.h>
+#include <graphics/renderer.h>
+#include <graphics/color.h>
+
 const int WINDOW_WIDTH = 600;
 const int WINDOW_HEIGHT = 900;
 
@@ -34,7 +39,19 @@ int main(int argc, char** argv) {
     return -1;
   }
 
+  set_floaty_renderer(renderer);
+
   SDL_Event event;
+
+  rectf rec = {
+    40.f, 50.f,
+    150.f, 200.f
+  };
+  vec2f point = { 20.f, 20.f };
+
+  color render_clear_color = { 0x0, 0x0, 0x0, 0xFF };
+  color rec_color = { 0xFF, 0x0, 0x0, 0xFF };
+  color point_color = { 0x0, 0xFF, 0x0, 0xFF };
 
   while (SDL_TRUE) {
     if (SDL_PollEvent(&event)) {
@@ -47,6 +64,11 @@ int main(int argc, char** argv) {
         break;
       }
     }
+
+      render_clear(&render_clear_color);
+      render_rectf(&rec, &rec_color);
+      render_vec2f(&point, &point_color);
+      floaty_display();
   }
 
   SDL_DestroyRenderer(renderer);

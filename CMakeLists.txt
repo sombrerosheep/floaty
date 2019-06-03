@@ -86,6 +86,8 @@ message(STATUS "")
 file(GLOB floaty_source
   "${floaty_source_dir}/*.c"
   "${floaty_source_dir}/core/*.c"
+  "${floaty_source_dir}/graphics/*.c"
+  "${floaty_source_dir}/floaty/*.c"
 )
 add_executable(floaty ${floaty_source})
 target_include_directories(floaty PUBLIC ${floaty_include_dir} ${SDL2_INCLUDE_DIR})
