@@ -8,5 +8,6 @@ typedef struct vec2f {
 } vec2f;
 
 SDL_Point vec2f_to_sdl_point(const vec2f *vec);
+vec2f vec2f_add_vec2f(const vec2f *vec, const vec2f *delta);
 
 #endif
