@@ -3,6 +3,7 @@
 
 #include <graphics/renderer.h>
 #include <floaty/floaty.h>
+#include <floaty/player.h>
 
 const int WINDOW_WIDTH = 600;
 const int WINDOW_HEIGHT = 900;
@@ -39,7 +40,8 @@ int main(int argc, char** argv) {
 
   set_floaty_renderer(renderer);
   game_state *floaty_game_state = (game_state*)SDL_calloc(1, sizeof(game_state));
-  init_floaty(floaty_game_state);
+  player *floaty_player = (player*)SDL_calloc(1, sizeof(player));
+  init_floaty(floaty_game_state, floaty_player);
 
   SDL_Event event;
 
@@ -55,10 +57,10 @@ int main(int argc, char** argv) {
       }
     }
 
-    floaty_draw(floaty_game_state);
+    floaty_draw(floaty_game_state, floaty_player);
   }
 
-  free_floaty(floaty_game_state);
+  free_floaty(floaty_game_state, floaty_player);
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   return 0;

@@ -3,17 +3,17 @@
 
 #include <core/rectf.h>
 #include <core/vec2f.h>
+#include <floaty/world.h>
+#include <floaty/player.h>
 #include <graphics/color.h>
 
 typedef struct game_state {
-  color *rec_color;
-  color *point_color;
-  rectf *rec;
-  vec2f *point;
+  vec2f player_pos;
+  world *current_world;
 } game_state;
 
-void init_floaty(game_state *state);
-void free_floaty(game_state *state);
-void floaty_draw(const game_state *state);
+void init_floaty(game_state *state, player *p);
+void free_floaty(game_state *state, player *p);
+void floaty_draw(const game_state *state, const player *p);
 
 #endif

@@ -5,57 +5,47 @@
 
 const color clear_color = { 0x0, 0x0, 0x0, 0xFF };
 
-void load_rect(game_state *state) {
-  color* rec_color = (color*)SDL_malloc(sizeof(color));
-  rectf* rec = (rectf*)SDL_malloc(sizeof(rectf));
+void init_world_geometry(game_state *state) {
+  int num_geometry = 8;
+  world *w = (world*)SDL_malloc(sizeof(world));
+  rectf *rects = (rectf*)SDL_malloc(sizeof(world) * num_geometry);
 
-  rec_color->r = 0xFF;
-  rec_color->g = 0x0;
-  rec_color->b = 0x0;
-  rec_color->a = 0xFF;
-  rec->x = 40.f;
-  rec->y = 50.f;
-  rec->w = 150.f;
-  rec->h = 200.f;
+  rects[0] = (rectf){ 200.f, 360.f, 20.f, 100.f };
+  rects[1] = (rectf){ 220.f, 320.f, 160.f, 20.f };
+  rects[2] = (rectf){ 340.f, 280.f, 20.f, 180.f };
+  rects[3] = (rectf){ 260.f, 400.f, 20.f, 120.f };
+  rects[4] = (rectf){ 260.f, 440.f, 40.f, 20.f };
+  rects[5] = (rectf){ 200.f, 500.f, 200.f, 20.f };
+  rects[6] = (rectf){ 320.f, 480.f, 20.f, 40.f };
+  rects[7] = (rectf){ 380.f, 400.f, 20.f, 120.f };
 
-  state->rec_color = rec_color;
-  state->rec = rec;
+  w->num_geometry = num_geometry;
+  w->geometry = rects;
+  state->current_world = w;
 }
 
-void load_point(game_state *state) {
-  color* vec_color = (color*)SDL_malloc(sizeof(color));
-  vec2f* vec = (vec2f*)SDL_malloc(sizeof(vec2f));
-
-  vec_color->r = 0x0;
-  vec_color->g = 0xFF;
-  vec_color->b = 0x0;
-  vec_color->a = 0xFF;
-  vec->x = 20.f;
-  vec->y = 20.f;
-  
-  state->point_color = vec_color;
-  state->point = vec;
+void load_player(game_state *state, player *p) {
+  state->player_pos = (vec2f){ 20.f, 20.f };
+  p->rec_size = (vec2f){ 10.f, 10.f };
 }
 
-void init_floaty(game_state *state) {
-  load_rect(state);
-  load_point(state);
+void init_floaty(game_state *state, player *p) {
+  init_world_geometry(state);
+  load_player(state, p);
 }
 
-void free_floaty(game_state *state) {
-  SDL_free(state->rec_color);
-  SDL_free(state->rec);
-  SDL_free(state->point_color);
-  SDL_free(state->point);
+void free_floaty(game_state *state, player *p) {
+  free_world(state->current_world);
+  free_player(p);
   
   SDL_free(state);
 }
 
-void floaty_draw(const game_state *state) {
+void floaty_draw(const game_state *state, const player *p) {
   render_clear(&clear_color);
 
-  render_rectf(state->rec, state->rec_color);
-  render_vec2f(state->point, state->point_color);
+  draw_world(state->current_world);
+  draw_player(p, &state->player_pos);
 
   floaty_display();
 }
