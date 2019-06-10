@@ -2,6 +2,9 @@
 
 void set_floaty_renderer(SDL_Renderer *renderer) {
   floaty_renderer = renderer;
+
+  SDL_Keycode k;
+  SDL_Scancode sc;
 }
 
 void render_clear(const color *c) {
@@ -21,6 +24,18 @@ void render_rectf(const rectf *rect, const color *c) {
   SDL_Rect sdl_rec = rectf_to_sdl_rect(rect);
   SDL_SetRenderDrawColor(floaty_renderer, c->r, c->g, c->b, c->a);
   SDL_RenderFillRect(floaty_renderer, &sdl_rec);
+}
+
+void render_rectfs(int count, const rectf *rect, const color *c) {
+  SDL_Rect *sdl_rects = (SDL_Rect*)SDL_malloc(sizeof(SDL_Rect) * count);
+  for (int i = 0; i < count; i++) {
+    sdl_rects[i] = rectf_to_sdl_rect(&rect[i]);
+  }
+
+  SDL_SetRenderDrawColor(floaty_renderer, c->r, c->g, c->b, c->a);
+  SDL_RenderFillRects(floaty_renderer, sdl_rects, count);
+
+  SDL_free(sdl_rects);
 }
 
 void render_vec2f(const vec2f *vec, const color *c) {
