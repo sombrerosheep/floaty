@@ -57,6 +57,8 @@ int main(int argc, char** argv) {
       }
     }
 
+    game_input input = floaty_input(floaty_player);
+    floaty_update(floaty_game_state, floaty_player, &input);
     floaty_draw(floaty_game_state, floaty_player);
   }
 
