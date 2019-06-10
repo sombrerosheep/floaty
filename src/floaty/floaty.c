@@ -4,6 +4,12 @@
 #include <graphics/color.h>
 
 const color clear_color = { 0x0, 0x0, 0x0, 0xFF };
+const floaty_key_bindings key_bindings = {
+  SDL_SCANCODE_W,
+  SDL_SCANCODE_S,
+  SDL_SCANCODE_A,
+  SDL_SCANCODE_D
+};
 
 void init_world_geometry(game_state *state) {
   int num_geometry = 8;
@@ -39,6 +45,55 @@ void free_floaty(game_state *state, player *p) {
   free_player(p);
   
   SDL_free(state);
+}
+
+game_input floaty_input(player *p) {
+  game_input input;
+  const Uint8 *keys = SDL_GetKeyboardState(NULL);
+
+  if (keys[key_bindings.move_up]) {
+    input.move_up = (game_button_state){ SDL_TRUE };
+  } else {
+    input.move_up = (game_button_state){ SDL_FALSE };
+  }
+
+  if (keys[key_bindings.move_down]) {
+    input.move_down = (game_button_state){ SDL_TRUE };
+  } else {
+    input.move_down = (game_button_state){ SDL_FALSE };
+  }
+
+  if (keys[key_bindings.move_left]) {
+    input.move_left = (game_button_state){ SDL_TRUE };
+  } else {
+    input.move_left = (game_button_state){ SDL_FALSE };
+  }
+
+  if (keys[key_bindings.move_right]) {
+    input.move_right = (game_button_state){ SDL_TRUE };
+  } else {
+    input.move_right = (game_button_state){ SDL_FALSE };
+  }
+
+  return input;
+}
+
+void floaty_update(game_state *state, player *p, const game_input *input) {
+  p->velocity = (vec2f){ 0.f, 0.f };
+  if (input->move_up.is_down) {
+    p->velocity.y = -PLAYER_MOVEMENT_SPEED;
+  }
+  if (input->move_down.is_down) {
+    p->velocity.y = PLAYER_MOVEMENT_SPEED;
+  }
+  if (input->move_left.is_down) {
+    p->velocity.x = -PLAYER_MOVEMENT_SPEED;
+  }
+  if (input->move_right.is_down) {
+    p->velocity.x = PLAYER_MOVEMENT_SPEED;
+  }
+
+  state->player_pos = vec2f_add_vec2f(&state->player_pos, &p->velocity);
 }
 
 void floaty_draw(const game_state *state, const player *p) {

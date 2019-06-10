@@ -6,6 +6,7 @@
 #include <floaty/world.h>
 #include <floaty/player.h>
 #include <graphics/color.h>
+#include <floaty/input.h>
 
 typedef struct game_state {
   vec2f player_pos;
@@ -14,6 +15,9 @@ typedef struct game_state {
 
 void init_floaty(game_state *state, player *p);
 void free_floaty(game_state *state, player *p);
+
+game_input floaty_input(player *p);
+void floaty_update(game_state *state, player *p, const game_input *input);
 void floaty_draw(const game_state *state, const player *p);
 
 #endif
