@@ -94,6 +94,10 @@ void floaty_update(game_state *state, player *p, const game_input *input) {
   }
 
   state->player_pos = vec2f_add_vec2f(&state->player_pos, &p->velocity);
+  
+  rectf player_rect = { state->player_pos.x, state->player_pos.y, p->rec_size.x, p->rec_size.y };
+  free_collisions(p->frame_collisions);
+  p->frame_collisions = player_collisions_with_rectfs(&player_rect, state->current_world->num_geometry, state->current_world->geometry);
 }
 
 void floaty_draw(const game_state *state, const player *p) {

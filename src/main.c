@@ -41,6 +41,9 @@ int main(int argc, char** argv) {
   set_floaty_renderer(renderer);
   game_state *floaty_game_state = (game_state*)SDL_calloc(1, sizeof(game_state));
   player *floaty_player = (player*)SDL_calloc(1, sizeof(player));
+  floaty_player->frame_collisions = (collisions*)SDL_malloc(sizeof(collisions));
+  floaty_player->frame_collisions->count = 0;
+  floaty_player->frame_collisions->intersections = NULL;
   init_floaty(floaty_game_state, floaty_player);
 
   SDL_Event event;
