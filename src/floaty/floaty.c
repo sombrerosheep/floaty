@@ -2,6 +2,7 @@
 
 #include <graphics/renderer.h>
 #include <graphics/color.h>
+#include <core/time.h>
 
 const color clear_color = { 0x0, 0x0, 0x0, 0xFF };
 const floaty_key_bindings key_bindings = {
@@ -79,18 +80,20 @@ game_input floaty_input(player *p) {
 }
 
 void floaty_update(game_state *state, player *p, const game_input *input) {
+  float frame_time = time_get_frame_seconds();
+
   p->velocity = (vec2f){ 0.f, 0.f };
   if (input->move_up.is_down) {
-    p->velocity.y = -PLAYER_MOVEMENT_SPEED;
+    p->velocity.y = -PLAYER_MOVEMENT_SPEED * frame_time;
   }
   if (input->move_down.is_down) {
-    p->velocity.y = PLAYER_MOVEMENT_SPEED;
+    p->velocity.y = PLAYER_MOVEMENT_SPEED * frame_time;
   }
   if (input->move_left.is_down) {
-    p->velocity.x = -PLAYER_MOVEMENT_SPEED;
+    p->velocity.x = -PLAYER_MOVEMENT_SPEED * frame_time;
   }
   if (input->move_right.is_down) {
-    p->velocity.x = PLAYER_MOVEMENT_SPEED;
+    p->velocity.x = PLAYER_MOVEMENT_SPEED * frame_time;
   }
 
   state->player_pos = vec2f_add_vec2f(&state->player_pos, &p->velocity);

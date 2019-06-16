@@ -4,6 +4,7 @@
 #include <graphics/renderer.h>
 #include <floaty/floaty.h>
 #include <floaty/player.h>
+#include <core/time.h>
 
 const int WINDOW_WIDTH = 600;
 const int WINDOW_HEIGHT = 900;
@@ -47,6 +48,7 @@ int main(int argc, char** argv) {
   init_floaty(floaty_game_state, floaty_player);
 
   SDL_Event event;
+  time_frame_tick();
 
   while (SDL_TRUE) {
     if (SDL_PollEvent(&event)) {
@@ -63,6 +65,8 @@ int main(int argc, char** argv) {
     game_input input = floaty_input(floaty_player);
     floaty_update(floaty_game_state, floaty_player, &input);
     floaty_draw(floaty_game_state, floaty_player);
+    unsigned int frame_milliseconds = time_get_frame_milliseconds();
+    time_frame_tick();
   }
 
   free_floaty(floaty_game_state, floaty_player);

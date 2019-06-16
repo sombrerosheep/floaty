@@ -4,7 +4,7 @@
 #include <core/vec2f.h>
 #include <core/rectf.h>
 
-#define PLAYER_MOVEMENT_SPEED 3.f
+#define PLAYER_MOVEMENT_SPEED 30.f
 
 typedef struct collisions {
   int count;
