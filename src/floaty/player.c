@@ -42,8 +42,8 @@ collisions* player_collisions_with_rectfs(const rectf *player_rect, int num_rect
 }
 
 void free_player(player *p) {
-  SDL_free(p);
   free_collisions(p->frame_collisions);
+  SDL_free(p);
 }
 
 void free_collisions(collisions *col) {
