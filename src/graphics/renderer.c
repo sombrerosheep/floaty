@@ -1,10 +1,9 @@
 #include <graphics/renderer.h>
 
+static SDL_Renderer *floaty_renderer;
+
 void set_floaty_renderer(SDL_Renderer *renderer) {
   floaty_renderer = renderer;
-
-  SDL_Keycode k;
-  SDL_Scancode sc;
 }
 
 void render_clear(const color *c) {

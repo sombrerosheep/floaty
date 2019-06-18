@@ -96,7 +96,10 @@ void floaty_update(game_state *state, player *p, const game_input *input) {
     p->velocity.x = PLAYER_MOVEMENT_SPEED * frame_time.seconds;
   }
 
-  state->player_pos = vec2f_add_vec2f(&state->player_pos, &p->velocity);
+  float movement_mag = vec2f_magnitude(&p->velocity);
+  vec2f normalized = vec2f_normalized(&p->velocity);
+  vec2f normalized_movement = vec2f_mul_float(&normalized, movement_mag);
+  state->player_pos = vec2f_add_vec2f(&state->player_pos, &normalized_movement);
   
   rectf player_rect = { state->player_pos.x, state->player_pos.y, p->rec_size.x, p->rec_size.y };
   free_collisions(p->frame_collisions);

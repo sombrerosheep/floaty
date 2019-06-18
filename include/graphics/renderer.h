@@ -6,8 +6,6 @@
 #include <core/rectf.h>
 #include <core/vec2f.h>
 
-static SDL_Renderer *floaty_renderer;
-
 void set_floaty_renderer(SDL_Renderer *renderer);
 void render_clear(const color *c);
 void floaty_display();
