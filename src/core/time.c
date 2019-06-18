@@ -21,19 +21,17 @@ static void set_last_frame_ticks(unsigned int ticks) {
   last_frame_ticks = ticks;
 }
 
-unsigned int time_get_frame_milliseconds() {
-  return get_this_frame_ticks() - get_last_frame_ticks();
-}
+game_time time_get_game_time() {
+  game_time g;
+  g.milliseconds = get_this_frame_ticks() - get_last_frame_ticks();;
 
-float time_get_frame_seconds() {
-  unsigned int frame_milliseconds = time_get_frame_milliseconds();
-
-  if (frame_milliseconds < 1) {
-    return 0.f;
+  if (g.milliseconds < 1) {
+    g.seconds = 0.f;
+  } else {
+    g.seconds = 1.f / (float)g.milliseconds;
   }
 
-  float result = 1.f / (float)frame_milliseconds;
-  return result;
+  return g;
 }
 
 void time_set_frame(unsigned int ticks) {

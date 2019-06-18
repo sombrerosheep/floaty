@@ -65,7 +65,6 @@ int main(int argc, char** argv) {
     game_input input = floaty_input(floaty_player);
     floaty_update(floaty_game_state, floaty_player, &input);
     floaty_draw(floaty_game_state, floaty_player);
-    unsigned int frame_milliseconds = time_get_frame_milliseconds();
     time_frame_tick();
   }
 

@@ -80,20 +80,20 @@ game_input floaty_input(player *p) {
 }
 
 void floaty_update(game_state *state, player *p, const game_input *input) {
-  float frame_time = time_get_frame_seconds();
+  game_time frame_time = time_get_game_time();
 
   p->velocity = (vec2f){ 0.f, 0.f };
   if (input->move_up.is_down) {
-    p->velocity.y = -PLAYER_MOVEMENT_SPEED * frame_time;
+    p->velocity.y = -PLAYER_MOVEMENT_SPEED * frame_time.seconds;
   }
   if (input->move_down.is_down) {
-    p->velocity.y = PLAYER_MOVEMENT_SPEED * frame_time;
+    p->velocity.y = PLAYER_MOVEMENT_SPEED * frame_time.seconds;
   }
   if (input->move_left.is_down) {
-    p->velocity.x = -PLAYER_MOVEMENT_SPEED * frame_time;
+    p->velocity.x = -PLAYER_MOVEMENT_SPEED * frame_time.seconds;
   }
   if (input->move_right.is_down) {
-    p->velocity.x = PLAYER_MOVEMENT_SPEED * frame_time;
+    p->velocity.x = PLAYER_MOVEMENT_SPEED * frame_time.seconds;
   }
 
   state->player_pos = vec2f_add_vec2f(&state->player_pos, &p->velocity);
