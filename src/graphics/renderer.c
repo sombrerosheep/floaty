@@ -26,7 +26,7 @@ void render_rectf(const rectf *rect, const color *c) {
 }
 
 void render_rectfs(int count, const rectf *rect, const color *c) {
-  SDL_Rect *sdl_rects = (SDL_Rect*)SDL_malloc(sizeof(SDL_Rect) * count);
+  SDL_Rect *sdl_rects = SDL_malloc(sizeof(SDL_Rect) * count);
   for (int i = 0; i < count; i++) {
     sdl_rects[i] = rectf_to_sdl_rect(&rect[i]);
   }

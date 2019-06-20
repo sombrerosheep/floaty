@@ -1,5 +1,5 @@
 #ifndef _FLOATY_CORE_INPUT
-#define _FLOAT_CORE_INPUT
+#define _FLOATY_CORE_INPUT
 
 #include <SDL.h>
 

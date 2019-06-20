@@ -3,6 +3,8 @@
 
 #include <core/vec2f.h>
 #include <core/rectf.h>
+#include <floaty/input.h>
+#include <floaty/floaty.h>
 
 #define PLAYER_MOVEMENT_SPEED 30.f
 
@@ -20,6 +22,7 @@ typedef struct player {
 collisions* player_collisions_with_rectfs(const rectf *player_rect, int num_rectfs, const rectf *rectfs);
 void draw_player(const player *p, const vec2f *pos);
 void draw_collisions(const collisions *col);
+void update_player(player *p, game_state *state, const game_input *input);
 void free_player(player *p);
 void free_collisions(collisions *col);
 

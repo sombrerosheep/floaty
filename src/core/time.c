@@ -1,7 +1,5 @@
 #include <core/time.h>
 
-#include <stdio.h>
-
 static unsigned int this_frame_ticks;
 static unsigned int last_frame_ticks;
 

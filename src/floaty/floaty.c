@@ -3,6 +3,7 @@
 #include <graphics/renderer.h>
 #include <graphics/color.h>
 #include <core/time.h>
+#include <floaty/player.h>
 
 const color clear_color = { 0x0, 0x0, 0x0, 0xFF };
 const floaty_key_bindings key_bindings = {
@@ -14,8 +15,8 @@ const floaty_key_bindings key_bindings = {
 
 void init_world_geometry(game_state *state) {
   int num_geometry = 8;
-  world *w = (world*)SDL_malloc(sizeof(world));
-  rectf *rects = (rectf*)SDL_malloc(sizeof(world) * num_geometry);
+  world *w = SDL_malloc(sizeof(world));
+  rectf *rects = SDL_malloc(sizeof(world) * num_geometry);
 
   rects[0] = (rectf){ 200.f, 360.f, 20.f, 100.f };
   rects[1] = (rectf){ 220.f, 320.f, 160.f, 20.f };
@@ -34,6 +35,9 @@ void init_world_geometry(game_state *state) {
 void load_player(game_state *state, player *p) {
   state->player_pos = (vec2f){ 20.f, 20.f };
   p->rec_size = (vec2f){ 10.f, 10.f };
+  p->frame_collisions = SDL_malloc(sizeof(collisions));
+  p->frame_collisions->count = 0;
+  p->frame_collisions->intersections = NULL;
 }
 
 void init_floaty(game_state *state, player *p) {
@@ -80,30 +84,7 @@ game_input floaty_input(player *p) {
 }
 
 void floaty_update(game_state *state, player *p, const game_input *input) {
-  game_time frame_time = time_get_game_time();
-
-  p->velocity = (vec2f){ 0.f, 0.f };
-  if (input->move_up.is_down) {
-    p->velocity.y = -PLAYER_MOVEMENT_SPEED * frame_time.seconds;
-  }
-  if (input->move_down.is_down) {
-    p->velocity.y = PLAYER_MOVEMENT_SPEED * frame_time.seconds;
-  }
-  if (input->move_left.is_down) {
-    p->velocity.x = -PLAYER_MOVEMENT_SPEED * frame_time.seconds;
-  }
-  if (input->move_right.is_down) {
-    p->velocity.x = PLAYER_MOVEMENT_SPEED * frame_time.seconds;
-  }
-
-  float movement_mag = vec2f_magnitude(&p->velocity);
-  vec2f normalized = vec2f_normalized(&p->velocity);
-  vec2f normalized_movement = vec2f_mul_float(&normalized, movement_mag);
-  state->player_pos = vec2f_add_vec2f(&state->player_pos, &normalized_movement);
-  
-  rectf player_rect = { state->player_pos.x, state->player_pos.y, p->rec_size.x, p->rec_size.y };
-  free_collisions(p->frame_collisions);
-  p->frame_collisions = player_collisions_with_rectfs(&player_rect, state->current_world->num_geometry, state->current_world->geometry);
+  update_player(p, state, input);
 }
 
 void floaty_draw(const game_state *state, const player *p) {
