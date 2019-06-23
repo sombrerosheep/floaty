@@ -38,6 +38,7 @@ int main(int argc, char** argv) {
     printf("Unable to create renderer:\n%s\n", SDL_GetError());
     return -1;
   }
+  SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
   set_floaty_renderer(renderer);
   game_state *floaty_game_state = SDL_calloc(1, sizeof(game_state));

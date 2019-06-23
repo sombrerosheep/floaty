@@ -51,6 +51,10 @@ void init_world_geometry(game_state *state) {
 
   w->num_geometry = num_geometry;
   w->geometry = rects;
+  w-> goal = make_world_rect( 4.f, 10.f, 1.f, 1.f);
+  w->goal.x += 10.f;
+  w->goal.y -= 10.f;
+
   state->current_world = w;
 }
 
