@@ -108,7 +108,7 @@ void update_player(player *p, game_state *state, const game_input *input) {
   state->player_pos = vec2f_add_vec2f(&state->player_pos, &normalized_movement);
 
   vec2f position_offset = handle_collisions(p, state);
-  p->minkowski_adjustment = (vec2f){
+  state->player_pos = (vec2f){
     state->player_pos.x + position_offset.x,
     state->player_pos.y + position_offset.y
   };
@@ -121,15 +121,8 @@ void draw_player(const player *p, const vec2f *pos) {
     p->rec_size.x,
     p->rec_size.y
   };
-  rectf minkowski = {
-    p->minkowski_adjustment.x,
-    p->minkowski_adjustment.y,
-    20.f,
-    20.f
-  };
 
   render_fill_rectf(&rec, &floaty_player_color);
-  render_draw_rectf(&minkowski, &floaty_player_color);
 }
 
 void free_player(player *p) {

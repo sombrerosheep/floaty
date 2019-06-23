@@ -57,7 +57,6 @@ void init_world_geometry(game_state *state) {
 void load_player(game_state *state, player *p) {
   state->player_pos = (vec2f){ 20.f, 20.f };
   p->rec_size = (vec2f){ 20.f, 20.f };
-  p->minkowski_adjustment = (vec2f){ 0.f, 0.f };
 }
 
 void init_floaty(game_state *state, player *p) {

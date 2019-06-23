@@ -11,7 +11,6 @@
 typedef struct player {
   vec2f rec_size;
   vec2f velocity;
-  vec2f minkowski_adjustment;
 } player;
 
 void draw_player(const player *p, const vec2f *pos);
