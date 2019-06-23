@@ -11,8 +11,9 @@ void render_clear(const color *c);
 void floaty_display();
 void release_renderer();
 
-void render_rectf(const rectf *rect, const color *c);
-void render_rectfs(int count, const rectf *rect, const color *c);
+void render_fill_rectf(const rectf *rect, const color *c);
+void render_fill_rectfs(int count, const rectf *rect, const color *c);
+void render_draw_rectf(const rectf *rect, const color *c);
 void render_vec2f(const vec2f *vec, const color *c);
 
 #endif
