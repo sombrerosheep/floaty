@@ -22,15 +22,16 @@ rectf make_world_rect(int x, int y, int w, int h) {
   float tiles_height = 12.f;
   float x_scale = bounds_width / tiles_width;
   float y_scale = bounds_height / tiles_height;
-  rectf result;
-
   float x_offset = (WINDOW_WIDTH - bounds_width) / 2;
   float y_offset = (WINDOW_HEIGHT - bounds_height) / 2;
+  rectf result;
 
-  result.x = x_offset + (x * x_scale);
-  result.y = y_offset + (y * y_scale);
-  result.w = w * x_scale;
-  result.h = h * y_scale;
+  result = (rectf){
+    x_offset + (x * x_scale),
+    y_offset + (y * y_scale),
+    w * x_scale,
+    h * y_scale
+  };
 
   return result;
 }
