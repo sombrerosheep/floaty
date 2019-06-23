@@ -54,6 +54,7 @@ void init_world_geometry(game_state *state) {
   w-> goal = make_world_rect( 4.f, 10.f, 1.f, 1.f);
   w->goal.x += 10.f;
   w->goal.y -= 10.f;
+  w->goal_met = SDL_FALSE;
 
   state->current_world = w;
 }

@@ -1,10 +1,8 @@
 #include <floaty/player.h>
-#include <floaty/floaty.h>
 #include <graphics/renderer.h>
 #include <graphics/color.h>
 #include <core/time.h>
 
-#include <stdio.h>
 #include <stdbool.h>
 
 const color floaty_player_color = { 0x0, 0x0, 0xFF, 0xFF };
@@ -73,8 +71,6 @@ vec2f handle_collisions(player *p, const game_state *state) {
       vec2f offset = get_minkowski_offset(&min_rect);
       player_rect.x += offset.x;
       player_rect.y += offset.y;
-
-      printf("Offset: %f, %f\n", offset.x, offset.y);
     }
   }
 
@@ -112,6 +108,18 @@ void update_player(player *p, game_state *state, const game_input *input) {
     state->player_pos.x + position_offset.x,
     state->player_pos.y + position_offset.y
   };
+
+  rectf player_rect = {
+    state->player_pos.x,
+    state->player_pos.y,
+    p->rec_size.x,
+    p->rec_size.y
+  };
+  if (rectf_intersects(&player_rect, &state->current_world->goal)) {
+    state->current_world->goal_met = SDL_TRUE;
+  } else {
+    state->current_world->goal_met = SDL_FALSE;
+  }
 }
 
 void draw_player(const player *p, const vec2f *pos) {

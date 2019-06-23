@@ -11,7 +11,7 @@ SDL_Rect rectf_to_sdl_rect(const rectf *rec) {
   return sdl_rec;
 }
 
-SDL_bool rectf_intersects_rectf(const rectf *a, const rectf *b) {
+SDL_bool rectf_intersects(const rectf *a, const rectf *b) {
   float a_min, a_max;
   float b_min, b_max;
 

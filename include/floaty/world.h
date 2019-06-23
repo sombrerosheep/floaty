@@ -7,6 +7,7 @@ typedef struct world {
   rectf *geometry;
   int num_geometry;
   rectf goal;
+  SDL_bool goal_met;
 } world;
 
 void draw_world(const world *w);
