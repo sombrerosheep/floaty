@@ -9,6 +9,7 @@ typedef struct rectf {
 } rectf;
 
 SDL_Rect rectf_to_sdl_rect(const rectf *rec);
-SDL_bool rectf_intersects_rectf(const rectf *a, const rectf *b, rectf *intersection);
+SDL_bool rectf_intersects(const rectf *a, const rectf *b);
+SDL_bool rectf_intersection(const rectf *a, const rectf *b, rectf *intersection);
 
 #endif

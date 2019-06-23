@@ -13,19 +13,41 @@ const floaty_key_bindings key_bindings = {
   SDL_SCANCODE_D
 };
 
+rectf make_world_rect(int x, int y, int w, int h) {
+  float WINDOW_WIDTH = 600.f;
+  float WINDOW_HEIGHT = 900.f;
+  float bounds_width = 375.f;
+  float tiles_width = 10.f;
+  float bounds_height = 450.f;
+  float tiles_height = 12.f;
+  float x_scale = bounds_width / tiles_width;
+  float y_scale = bounds_height / tiles_height;
+  rectf result;
+
+  float x_offset = (WINDOW_WIDTH - bounds_width) / 2;
+  float y_offset = (WINDOW_HEIGHT - bounds_height) / 2;
+
+  result.x = x_offset + (x * x_scale);
+  result.y = y_offset + (y * y_scale);
+  result.w = w * x_scale;
+  result.h = h * y_scale;
+
+  return result;
+}
+
 void init_world_geometry(game_state *state) {
   int num_geometry = 8;
   world *w = SDL_malloc(sizeof(world));
   rectf *rects = SDL_malloc(sizeof(world) * num_geometry);
 
-  rects[0] = (rectf){ 200.f, 360.f, 20.f, 100.f };
-  rects[1] = (rectf){ 220.f, 320.f, 160.f, 20.f };
-  rects[2] = (rectf){ 340.f, 280.f, 20.f, 180.f };
-  rects[3] = (rectf){ 260.f, 400.f, 20.f, 120.f };
-  rects[4] = (rectf){ 260.f, 440.f, 40.f, 20.f };
-  rects[5] = (rectf){ 200.f, 500.f, 200.f, 20.f };
-  rects[6] = (rectf){ 320.f, 480.f, 20.f, 40.f };
-  rects[7] = (rectf){ 380.f, 400.f, 20.f, 120.f };
+  rects[0] = make_world_rect(0.f, 4.f, 1.f, 5.f );
+  rects[1] = make_world_rect(1.f, 2.f, 8.f, 1.f );
+  rects[2] = make_world_rect(7.f, 0.f, 1.f, 9.f );
+  rects[3] = make_world_rect(3.f, 6.f, 1.f, 6.f );
+  rects[4] = make_world_rect(3.f, 8.f, 2.f, 1.f );
+  rects[5] = make_world_rect(0.f, 11.f, 10.f, 1.f );
+  rects[6] = make_world_rect(6.f, 10.f, 1.f, 2.f );
+  rects[7] = make_world_rect(9.f, 6.f, 1.f, 6.f );
 
   w->num_geometry = num_geometry;
   w->geometry = rects;
@@ -34,7 +56,7 @@ void init_world_geometry(game_state *state) {
 
 void load_player(game_state *state, player *p) {
   state->player_pos = (vec2f){ 20.f, 20.f };
-  p->rec_size = (vec2f){ 10.f, 10.f };
+  p->rec_size = (vec2f){ 20.f, 20.f };
   p->frame_collisions = SDL_malloc(sizeof(collisions));
   p->frame_collisions->count = 0;
   p->frame_collisions->intersections = NULL;

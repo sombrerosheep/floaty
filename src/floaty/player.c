@@ -5,7 +5,14 @@
 #include <core/time.h>
 
 const color floaty_player_color = { 0x0, 0x0, 0xFF, 0xFF };
+const color floaty_player_adjusted_color = { 0xFF, 0xFF, 0xFF, 0xFF };
 const color intersect_color = { 0xFF, 0x0, 0x0, 0x80 };
+
+void set_collisions(player *p, const game_state *state) {
+  rectf player_rect = { state->player_pos.x, state->player_pos.y, p->rec_size.x, p->rec_size.y };
+  free_collisions(p->frame_collisions);
+  p->frame_collisions = player_collisions_with_rectfs(&player_rect, state->current_world->num_geometry, state->current_world->geometry);
+}
 
 void update_player(player *p, game_state *state, const game_input *input) {
   game_time frame_time = time_get_game_time();
@@ -29,9 +36,7 @@ void update_player(player *p, game_state *state, const game_input *input) {
   vec2f normalized_movement = vec2f_mul_float(&normalized, movement_mag);
   state->player_pos = vec2f_add_vec2f(&state->player_pos, &normalized_movement);
 
-  rectf player_rect = { state->player_pos.x, state->player_pos.y, p->rec_size.x, p->rec_size.y };
-  free_collisions(p->frame_collisions);
-  p->frame_collisions = player_collisions_with_rectfs(&player_rect, state->current_world->num_geometry, state->current_world->geometry);
+  set_collisions(p, state);
 }
 
 void draw_player(const player *p, const vec2f *pos) {
@@ -58,7 +63,7 @@ collisions* player_collisions_with_rectfs(const rectf *player_rect, int num_rect
   rectf intersection;
 
   for (int i = 0, r = 0; i < num_rectfs; i++) {
-    if (rectf_intersects_rectf(player_rect, &rectfs[i], &intersection) == SDL_TRUE) {
+    if (rectf_intersection(player_rect, &rectfs[i], &intersection) == SDL_TRUE) {
       col_data->intersections[r] = intersection;
       r++;
     } else {
